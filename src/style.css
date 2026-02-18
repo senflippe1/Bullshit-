@@ -1,0 +1,366 @@
+/* ============================================
+   BULLSHIT DETECTOR – Clean. Minimal. Honest.
+   ============================================ */
+
+:root {
+  --bg: #FAFAFA;
+  --text: #1a1a1a;
+  --text-muted: #888888;
+
+  --surface: #ffffff;
+  --border: #e0e0e0;
+
+  --accent: #E11D48;
+  /* Rose Red */
+  --safe: #10B981;
+  /* Emerald Green */
+  --warn: #F59E0B;
+  /* Amber */
+
+  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --radius: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111111;
+    --text: #ffffff;
+    --text-muted: #a1a1a1;
+    --surface: #1C1C1C;
+    --border: #333333;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-main);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+#app {
+  max-width: 1200px;
+  /* Wider for 2 cols */
+  width: 100%;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Alarm Overlay --- */
+.alarm-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--accent);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1000;
+  transition: opacity 0.5s ease;
+}
+
+.alarm-overlay.active {
+  opacity: 0.15;
+}
+
+/* --- Header --- */
+.header {
+  text-align: center;
+  padding: 10px 0;
+  /* Compact */
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.status-bar {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+/* --- Meter (Top Bar) --- */
+.meter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.meter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bs-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.bs-value {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  color: var(--text);
+  line-height: 1;
+}
+
+.meter-bar {
+  height: 12px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.meter-fill {
+  height: 100%;
+  background: var(--safe);
+  width: 0%;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease;
+  border-radius: 99px;
+}
+
+/* --- Main Grid (2 Columns) --- */
+.main {
+  flex: 1;
+  /* Fill remaining space */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* Split view */
+  gap: 20px;
+  overflow: hidden;
+  /* Container doesn't scroll, columns do */
+  padding-bottom: 20px;
+}
+
+/* --- Column Styles --- */
+.column-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+  /* Header fixed, content scrolls */
+  box-shadow: var(--shadow-sm);
+}
+
+.column-header {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 5px;
+}
+
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 5px;
+  /* Space for scrollbar */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* --- Transcript Column --- */
+.transcript-line {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  transition: color 0.3s ease;
+  margin-bottom: 0;
+}
+
+.transcript-line.final {
+  color: var(--text);
+}
+
+.placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+/* --- Facts Feed Column --- */
+/* Ensure cards stack nicely */
+.feed-container {
+  /* Using scroll-area class now, but specific styles here if needed */
+  flex-direction: column-reverse;
+  /* Newest at bottom? No, standard is Top for feed usually, but chat is bottom. 
+    Let's keep prepend logic nicely by using column-reverse or just standard. 
+    User wants "two frames scrolling". Standard chat is newest at bottom. Facts feed usually newest at top.
+    Let's make facts newest at top (standard feed). */
+  flex-direction: column;
+}
+
+.fact-card {
+  background: var(--bg);
+  /* Slightly distinct from surface */
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  animation: slideIn 0.3s ease forwards;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  color: var(--text);
+  flex-shrink: 0;
+  /* Don't shrink */
+}
+
+.fact-card.bullshit {
+  border-left: 4px solid var(--accent);
+}
+
+.fact-card.fact {
+  border-left: 4px solid var(--safe);
+}
+
+.card-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.card-content {
+  flex: 1;
+}
+
+.card-header {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.bullshit .card-header span {
+  color: var(--accent);
+}
+
+.fact .card-header span {
+  color: var(--safe);
+}
+
+.card-text {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* --- Footer Controls --- */
+.footer {
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+}
+
+.btn-main {
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  padding: 16px 40px;
+  border-radius: 99px;
+  font-family: var(--font-main);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-main:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.btn-main:active {
+  transform: scale(0.98);
+}
+
+.btn-main.active {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.2);
+}
+
+/* --- Mobile Stack --- */
+@media (max-width: 768px) {
+  .main {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    /* Stack vertically on mobile */
+  }
+
+  .logo {
+    font-size: 1rem;
+  }
+
+  .bs-value {
+    font-size: 1.5rem;
+  }
+}
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 99px;
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BULLSHIT DETECTOR</title>
+  <meta name="description" content="Real-time AI Fact Checking. Honest and Clean." />
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css" />
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐂</text></svg>" />
+</head>
+
+<body>
+  <div id="app">
+    <!-- Overlay for ALARM -->
+    <div class="alarm-overlay" id="alarmOverlay"></div>
+
+    <!-- Header -->
+    <header class="header">
+      <h1 class="logo">BULLSHIT DETECTOR</h1>
+      <div class="status-bar" id="sysStatus">Ready to listen</div>
+    </header>
+
+    <!-- Meter (Top Bar) -->
+    <div class="meter-container">
+      <div class="meter-header">
+        <span class="bs-label">TRUTH INTEGRITY</span>
+        <span class="bs-value" id="bsValue">0%</span>
+      </div>
+      <div class="meter-bar">
+        <div class="meter-fill" id="meterFill" style="width: 0%;"></div>
+      </div>
+    </div>
+
+    <!-- Main Interface (2 Columns) -->
+    <main class="main">
+
+      <!-- Left Column: Transcript -->
+      <div class="column-container">
+        <div class="column-header">Live Transcript</div>
+        <div class="scroll-area" id="transcript">
+          <p class="placeholder">Tap start and speak...</p>
+        </div>
+      </div>
+
+      <!-- Right Column: Facts -->
+      <div class="column-container">
+        <div class="column-header">Fact Check Feed</div>
+        <div class="scroll-area feed-container" id="feedContainer">
+          <!-- Cards will be injected here -->
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Controls -->
+    <footer class="footer">
+      <button class="btn-main" id="btnToggle">
+        <span class="btn-icon">🎙️</span>
+        <span class="btn-text" id="btnText">Start Listening</span>
+      </button>
+    </footer>
+  </div>
+
+  <!-- Audio Element for Alarm -->
+  <audio id="alarmSound" src="https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3" preload="auto"></audio>
+
+  <script type="module" src="/src/main.js"></script>
+  <span id="sysTime" style="display:none"></span>
+</body>
+
+</html>
