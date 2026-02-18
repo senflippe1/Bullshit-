@@ -165,7 +165,7 @@ async function analyzeText(text) {
 
     } catch (error) {
         console.error("AI Error:", error);
-        updateStatus("SYSTEM ERROR", "danger");
+        updateStatus(`ERROR: ${error.message || error}`, "danger");
     }
 }
 
