@@ -1,10 +1,12 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // --- Config ---
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+console.log("Bullshit Detector v1.2 Loaded"); // Debugging Version
+const keyRaw = import.meta.env.VITE_GEMINI_API_KEY;
+const GEMINI_API_KEY = keyRaw ? keyRaw.trim() : "";
 
 if (!GEMINI_API_KEY || GEMINI_API_KEY.includes("DEIN_API_KEY")) {
-    alert("API Key fehlt! Bitte in .env oder Vercel Settings eintragen.");
+    alert("API Key fehlt oder ist falsch! Prüfe Vercel Settings.");
     throw new Error("Missing API Key");
 }
 
