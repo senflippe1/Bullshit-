@@ -1,7 +1,13 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // --- Config ---
-const GEMINI_API_KEY = 'AIzaSyAQk0mjppyFMx_M060Ef37h1dhHG_WPaLo';
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
+if (!GEMINI_API_KEY || GEMINI_API_KEY.includes("DEIN_API_KEY")) {
+    alert("API Key fehlt! Bitte in .env oder Vercel Settings eintragen.");
+    throw new Error("Missing API Key");
+}
+
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 // --- State ---
